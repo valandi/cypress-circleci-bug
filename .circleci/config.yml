@@ -59,4 +59,4 @@ workflows:
       - alertApplitools:
           context: nlo_context
           requires:
-            - cypress
+            - install
