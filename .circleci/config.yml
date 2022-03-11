@@ -61,7 +61,7 @@ workflows:
   sample:
     jobs:
       - setup:
-        context: nlo_context
+          context: nlo_context
       - cypress/install:
           context: nlo_context
           name: "install"
