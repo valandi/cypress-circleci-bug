@@ -60,7 +60,7 @@ jobs:
 workflows:
   sample:
     jobs:
-      -setup:
+      - setup:
         context: nlo_context
       - cypress/install:
           context: nlo_context
