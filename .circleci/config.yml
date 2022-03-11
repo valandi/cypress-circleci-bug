@@ -28,7 +28,7 @@ jobs:
     executor: node
     steps:
       - run:
-        name: run tests - placeholder
+        name: run tests placeholder
         command: |
           npm test
 
@@ -56,23 +56,6 @@ workflows:
           context: nlo_context
           requires:
             - install      
-      # - cypress/run:
-      #     context: nlo_context
-      #     requires:
-      #       - prepareApplitools
-      #     name: "cypress"
-      #     browser: chrome
-      #     executor: with-chrome
-      #     wait-on: "http://localhost:8000"
-      #     yarn: true
-      #     start: yarn serve
-      #     record: true
-      #     parallel: true
-      #     parallelism: 10
-      #     group: "UI - Chrome"
-      #     no-workspace: true
-      #     ci-build-id: ${CIRCLE_WORKFLOW_ID}
-      #     env: "CYPRESS_RECORD_KEY=$CYPRESS_RECORD_KEY,APPLITOOLS_API_KEY=$APPLITOOLS_API_KEY,APPLITOOLS_BATCH_ID=$CIRCLE_SHA1"
       - alertApplitools:
           context: nlo_context
           requires:
