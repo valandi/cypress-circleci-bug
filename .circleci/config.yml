@@ -28,9 +28,9 @@ jobs:
     executor: node
     steps:
       - run:
-        name: run tests placeholder
-        command: |
-          npm test
+          name: run tests placeholder
+          command: |
+            npm test
 
   alertApplitools:
     executor: node
