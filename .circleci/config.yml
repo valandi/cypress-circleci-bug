@@ -27,7 +27,7 @@ jobs:
   runTestPlaceholder:
     executor: node
     steps:
-      -run:
+      - run:
         name: run tests - placeholder
         command: |
           npm test
