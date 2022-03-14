@@ -33,3 +33,4 @@ workflows:
           no-workspace: true
           record: true
           tags: dependencies,renovate
+      - unit
