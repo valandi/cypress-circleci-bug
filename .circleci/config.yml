@@ -67,18 +67,6 @@ workflows:
           yarn: true
           executor: with-chrome
           build: "npm install"
-      - typecheck:
-          context: nlo_context
-          requires:
-            - install
-      - eslint:
-          context: nlo_context
-          requires:
-            - install
-      - jest:
-          context: nlo_context
-          requires:
-            - install
       - prepareApplitools:
           context: nlo_context
           requires:
@@ -91,7 +79,6 @@ workflows:
           browser: chrome
           executor: with-chrome
           start: npm test
-          record: true
           parallel: true
           parallelism: 10
           group: "UI - Chrome"
