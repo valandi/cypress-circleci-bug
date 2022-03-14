@@ -13,22 +13,7 @@ executors:
     resource_class: xlarge
 
 jobs:
-  eslint:
-    executor: node
-    steps:
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: ES Lint
-          command: yarn lint
-  typecheck:
-    executor: node
-    steps:
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Typecheck
-          command: yarn typecheck
+
   jest:
     executor: node
     steps:
@@ -79,8 +64,6 @@ workflows:
           browser: chrome
           executor: with-chrome
           start: npm test
-          parallel: true
-          parallelism: 10
           group: "UI - Chrome"
           no-workspace: true
           ci-build-id: ${CIRCLE_WORKFLOW_ID}
