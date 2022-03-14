@@ -13,22 +13,21 @@ executors:
     resource_class: xlarge
 
 jobs:
-
-  jest:
-    executor: node
-    steps:
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Jest
-          command: yarn test
   prepareApplitools:
     executor: node
     steps:
       - run:
+          name: Setup Environment Variables
+          command: |
+            echo 'export PATH=$GOPATH/bin:$PATH' >> $BASH_ENV
+            echo 'export GIT_SHA1=$CIRCLE_SHA1' >> $BASH_ENV
+      - run:
           name: Prepare Applitools for code push
           command: |
-            curl -X POST "https://eyesapi.applitools.com/api/externals/github/push?apiKey=$APPLITOOLS_API_KEY&CommitSha=$CIRCLE_SHA1&BranchName=$CIRCLE_BRANCH" --data "" -L
+            export APPLITOOLS_BATCH_ID="echo $CIRCLE_SHA1"
+            export APPLITOOLS_BRANCH_NAME="echo chris_applitools/cypress_circleci_bug/$CIRCLE_BRANCH"
+            echo "hello world"
+            curl --data '' -L -X POST "https://eyesapi.applitools.com/api/externals/github/push?apiKey=$APPLITOOLS_API_KEY&CommitSha=$CIRCLE_SHA1&BranchName=$APPLITOOLS_BRANCH_NAME"
   alertApplitools:
     executor: node
     steps:
@@ -40,35 +39,27 @@ workflows:
   version: 2
   install_build_test:
     jobs:
-      # Setup
-      # Install dependencies and build
-      # Run Typecheck
-      # Run lint
-      # Run unit-tests
-      # Run cypress tests
       - cypress/install:
           context: nlo_context
           name: "install"
-          yarn: true
           executor: with-chrome
-          build: "npm install"
+          build: npm install
       - prepareApplitools:
           context: nlo_context
           requires:
             - install
       - cypress/run:
           context: nlo_context
+          name: "run"
           requires:
             - prepareApplitools
-          name: "cypress"
           browser: chrome
           executor: with-chrome
-          start: npm test
           group: "UI - Chrome"
           no-workspace: true
           ci-build-id: ${CIRCLE_WORKFLOW_ID}
           env: "CYPRESS_RECORD_KEY=$CYPRESS_RECORD_KEY,APPLITOOLS_API_KEY=$APPLITOOLS_API_KEY,APPLITOOLS_BATCH_ID=$CIRCLE_SHA1"
       - alertApplitools:
-          context: nlo_context
           requires:
-            - cypress
+            - run
+          context: nlo_context
