@@ -17,6 +17,7 @@ jobs:
       tag: '12'
     steps:
       - checkout
+      - run: apt install libnss3-dev libgdk-pixbuf2.0-dev libgtk-3-dev libxss-dev
       - node/with-cache:
           steps:
             - run: npm ci
