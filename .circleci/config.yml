@@ -43,8 +43,11 @@ workflows:
           build: npm install
       - prepareApplitools:
           context: nlo_context
+          requires:
+            - install
       - cypress/run:
           context: nlo_context
+          name: "run"
           requires:
             - prepareApplitools
           name: "cypress"
@@ -56,4 +59,6 @@ workflows:
           ci-build-id: ${CIRCLE_WORKFLOW_ID}
           env: "CYPRESS_RECORD_KEY=$CYPRESS_RECORD_KEY,APPLITOOLS_API_KEY=$APPLITOOLS_API_KEY,APPLITOOLS_BATCH_ID=$CIRCLE_SHA1"
       - alertApplitools:
+          requires:
+            - run
           context: nlo_context
