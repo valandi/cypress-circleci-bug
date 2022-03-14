@@ -17,10 +17,10 @@ jobs:
     executor: node
     steps:
       - run:
-        name: Setup Environment Variables
-        command: |
-          echo 'export PATH=$GOPATH/bin:$PATH' >> $BASH_ENV
-          echo 'export GIT_SHA1=$CIRCLE_SHA1' >> $BASH_ENV
+          name: Setup Environment Variables
+          command: |
+            echo 'export PATH=$GOPATH/bin:$PATH' >> $BASH_ENV
+            echo 'export GIT_SHA1=$CIRCLE_SHA1' >> $BASH_ENV
       - run:
           name: Prepare Applitools for code push
           command: |
@@ -36,22 +36,13 @@ workflows:
   version: 2
   install_build_test:
     jobs:
-      # Setup
-      # Install dependencies and build
-      # Run Typecheck
-      # Run lint
-      # Run unit-tests
-      # Run cypress tests
       - cypress/install:
           context: nlo_context
           name: "install"
-          yarn: true
           executor: with-chrome
-          build: "npm install"
+          build: npm install
       - prepareApplitools:
           context: nlo_context
-          requires:
-            - install
       - cypress/run:
           context: nlo_context
           requires:
@@ -66,5 +57,3 @@ workflows:
           env: "CYPRESS_RECORD_KEY=$CYPRESS_RECORD_KEY,APPLITOOLS_API_KEY=$APPLITOOLS_API_KEY,APPLITOOLS_BATCH_ID=$CIRCLE_SHA1"
       - alertApplitools:
           context: nlo_context
-          requires:
-            - cypress
