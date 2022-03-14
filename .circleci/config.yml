@@ -66,7 +66,7 @@ workflows:
           name: "install"
           yarn: true
           executor: with-chrome
-          build: "yarn run build:max-space"
+          build: "npm install"
       - typecheck:
           context: nlo_context
           requires:
@@ -90,9 +90,7 @@ workflows:
           name: "cypress"
           browser: chrome
           executor: with-chrome
-          wait-on: "http://localhost:8000"
-          yarn: true
-          start: yarn serve
+          start: npm test
           record: true
           parallel: true
           parallelism: 10
