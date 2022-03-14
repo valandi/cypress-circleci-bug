@@ -1,37 +1,35 @@
-name: CI
+version: 2.1
+orbs:
+  # use latest 1.x.y version of the orb
+  # best practice is to use an exact version
+  cypress: cypress-io/cypress@1.16.1
+  node: circleci/node@1.1
 
-on:
-  push:
-    branches:
-      - '**'
-        
-env:
-    APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
-    APPLITOOLS_BATCH_ID: ${{ github.sha }}
+executors:
+  chrome80-ff72:
+    docker:
+      - image: 'cypress/browsers:node13.6.0-chrome80-ff72'
 
 jobs:
-  run-tests:
-    runs-on: ubuntu-latest
+  unit:
+    executor:
+      name: node/default
+      tag: '12'
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Log Git SHA
-        run: echo "$GITHUB_SHA"
-      - name: Use Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: '15.x'
-      - name: Cypress run
-        uses: cypress-io/github-action@v2
-        with:
-          working-directory: tutorial-cypress
-    
-  batch-completion-notification:
-    needs: run-tests
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - name: Update Applitools batch status 
-        uses: wei/curl@v1.1.1
-        with:
-          args: -d "" -X POST https://eyesapi.applitools.com/api/externals/github/servers/github.com/commit/${{ env.APPLITOOLS_BATCH_ID }}/complete?apiKey=${{ secrets.APPLITOOLS_API_KEY }}
+      - checkout
+      - node/with-cache:
+          steps:
+            - run: npm ci
+      - run: npm test
+
+workflows:
+  dependencies:
+    jobs:
+      - cypress/run:
+          name: test dependencies
+          filters:
+            branches:
+              only: /renovate.*/
+          no-workspace: true
+          record: true
+          tags: dependencies,renovate
