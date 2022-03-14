@@ -1,37 +1,106 @@
 version: 2.1
 orbs:
-  # use latest 1.x.y version of the orb
-  # best practice is to use an exact version
-  cypress: cypress-io/cypress@1.16.1
-  node: circleci/node@1.1
+  cypress: cypress-io/cypress@1
 
 executors:
-  chrome80-ff72:
+  node:
     docker:
-      - image: 'cypress/browsers:node13.6.0-chrome80-ff72'
+      - image: cimg/node:16.9
+  # it's actually chrome & firefox but we choose only chrome when used in the cypress job below
+  with-chrome:
+    docker:
+      - image: "cypress/browsers:node14.17.0-chrome88-ff89"
+    resource_class: xlarge
 
 jobs:
-  unit:
-    executor:
-      name: node/default
-      tag: '12'
+  eslint:
+    executor: node
     steps:
-      - checkout
-      - run: sudo apt install libgdk-pixbuf2.0-dev libgtk-3-dev libxss-dev
-      - node/with-cache:
-          steps:
-            - run: npm ci
-      - run: npm test
-
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: ES Lint
+          command: yarn lint
+  typecheck:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Typecheck
+          command: yarn typecheck
+  jest:
+    executor: node
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Jest
+          command: yarn test
+  prepareApplitools:
+    executor: node
+    steps:
+      - run:
+          name: Prepare Applitools for code push
+          command: |
+            curl -X POST "https://eyesapi.applitools.com/api/externals/github/push?apiKey=$APPLITOOLS_API_KEY&CommitSha=$CIRCLE_SHA1&BranchName=$CIRCLE_BRANCH" --data "" -L
+  alertApplitools:
+    executor: node
+    steps:
+      - run:
+          name: Alert Applitools of completion
+          command: |
+            curl -X POST "https://eyesapi.applitools.com/api/externals/github/servers/github.com/commit/$CIRCLE_SHA1/complete?apiKey=$APPLITOOLS_API_KEY" -H "Content-Type: application/json" --data '{"serverId": "github.com", "commitSha": "$CIRCLE_SHA1"}' -v -L
 workflows:
-  dependencies:
+  version: 2
+  install_build_test:
     jobs:
+      # Setup
+      # Install dependencies and build
+      # Run Typecheck
+      # Run lint
+      # Run unit-tests
+      # Run cypress tests
+      - cypress/install:
+          context: nlo_context
+          name: "install"
+          yarn: true
+          executor: with-chrome
+          build: "yarn run build:max-space"
+      - typecheck:
+          context: nlo_context
+          requires:
+            - install
+      - eslint:
+          context: nlo_context
+          requires:
+            - install
+      - jest:
+          context: nlo_context
+          requires:
+            - install
+      - prepareApplitools:
+          context: nlo_context
+          requires:
+            - install
       - cypress/run:
-          name: test dependencies
-          filters:
-            branches:
-              only: /renovate.*/
-          no-workspace: true
+          context: nlo_context
+          requires:
+            - prepareApplitools
+          name: "cypress"
+          browser: chrome
+          executor: with-chrome
+          wait-on: "http://localhost:8000"
+          yarn: true
+          start: yarn serve
           record: true
-          tags: dependencies,renovate
-      - unit
+          parallel: true
+          parallelism: 10
+          group: "UI - Chrome"
+          no-workspace: true
+          ci-build-id: ${CIRCLE_WORKFLOW_ID}
+          env: "CYPRESS_RECORD_KEY=$CYPRESS_RECORD_KEY,APPLITOOLS_API_KEY=$APPLITOOLS_API_KEY,APPLITOOLS_BATCH_ID=$CIRCLE_SHA1"
+      - alertApplitools:
+          context: nlo_context
+          requires:
+            - cypress
