@@ -50,7 +50,6 @@ workflows:
           name: "run"
           requires:
             - prepareApplitools
-          name: "cypress"
           browser: chrome
           executor: with-chrome
           start: npm test
