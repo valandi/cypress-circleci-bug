@@ -26,7 +26,7 @@ jobs:
           command: |
             export APPLITOOLS_BATCH_ID=`echo $CIRCLE_SHA1`
             export APPLITOOLS_BRANCH_NAME=`echo chris_applitools/cypress_circleci_bug/$CIRCLE_BRANCH`
-            curl --data '' -L -X POST "https://eyesapi.applitools.com/api/externals/github/push?apiKey=$APPLITOOLS_API_KEY&CommitSha=$CIRCLE_SHA1&BranchName=$APPLITOOLS_BRANCH_NAME" 
+            curl --data '' -L -X POST "https://eyesapi.applitools.com/api/externals/github/push?apiKey=$APPLITOOLS_API_KEY&CommitSha=$CIRCLE_SHA1&BranchName=$APPLITOOLS_BRANCH_NAME` 
   alertApplitools:
     executor: node
     steps:
@@ -49,14 +49,15 @@ workflows:
             - install
       - cypress/run:
           context: nlo_context
-          env: "CYPRESS_RECORD_KEY=$CYPRESS_RECORD_KEY,APPLITOOLS_API_KEY=$APPLITOOLS_API_KEY,APPLITOOLS_BATCH_ID=$CIRCLE_SHA1"
-          command: npm run test:ci
           name: "run"
           requires:
             - prepareApplitools
           browser: chrome
+          executor: with-chrome
+          group: "UI - Chrome"
+          no-workspace: true
           ci-build-id: ${CIRCLE_WORKFLOW_ID}
-          
+          env: "CYPRESS_RECORD_KEY=$CYPRESS_RECORD_KEY,APPLITOOLS_API_KEY=$APPLITOOLS_API_KEY,APPLITOOLS_BATCH_ID=$CIRCLE_SHA1"
       - alertApplitools:
           requires:
             - run
