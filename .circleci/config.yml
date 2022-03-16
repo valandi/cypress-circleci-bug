@@ -50,6 +50,7 @@ workflows:
             - install
       - cypress/run:
           context: nlo_context
+          command: APPLITOOLS_BATCH_ID=$CIRCLESHA1 npm test
           name: "run"
           requires:
             - prepareApplitools
