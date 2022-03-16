@@ -1,31 +1,25 @@
+  
+version: 2
 jobs:
   build:
+    working_directory: ~/applitools-github-circleci
     docker:
-      - image: circleci/node:16.13.1
-      
-    working_directory: ~/repo
-    
+      - image: cypress/base:10
     steps:
-      - checkout:
-      - run: printenv
-      - run:
-          command: npm install
-      - run:
-          name: Prepare for commit push - Temporarily not needed; only want integration on PR
-          command: |
-            echo $APPLITOOLS_API_KEY
-            echo $CIRCLE_BRANCH
-      - run:
-          name: Set environnment variable and run test
-          command: | 
-            if [[ -z "${CIRCLE_PULL_REQUEST}" ]]; then
-              echo "Not a PR, add an APPLITOOLS_BRANCH_NAME"
-              export APPLITOOLS_BRANCH_NAME="callulis/cypress-circleci/${CIRCLE_BRANCH}"
-              curl -v -L -d '' -X POST "eyesapi.applitools.com/api/externals/github/push?apiKey=$APPLITOOLS_API_KEY&CommitSha=$CIRCLE_SHA1&BranchName=$APPLITOOLS_BRANCH_NAME"
-            else
-              echo "Is a PR, expect Branch and Parent Branch set by the Github integration app"
-            fi
-            export APPLITOOLS_BATCH_ID=${CIRCLE_SHA1}
-            echo ${APPLITOOLS_BATCH_ID}
-            echo ${APPLITOOLS_BRANCH_NAME}
-            APPLITOOLS_DONT_CLOSE_BATCHES=true npm test
+      - checkout
+      - restore_cache:
+          keys:
+            - v2-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - v2-deps-{{ .Branch }}-
+            - v2-deps-
+      - run: npm ci
+      - save_cache:
+          key: v2-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          paths:
+            - ~/.npm
+            - ~/.cache
+      - run: 
+        command: |
+          export APPLITOOLS_BATCH_ID=${CIRCLE_SHA1}
+          echo $APPLITOOLS_BATCH_ID
+          npm run cy:run -- --spec "cypress/integration/salesforce-contactus.spec.js"
