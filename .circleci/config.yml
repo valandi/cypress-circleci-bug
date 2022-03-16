@@ -15,9 +15,7 @@ workflows:
       - cypress/run:
           browser: chrome
           executor: with-chrome
-          command: |
-            export APPLITOOLS_BATCH_ID=`echo $CIRCLE_SHA1`
-            npm test
-
+          command: npm test
+          env: "CYPRESS_RECORD_KEY=$CYPRESS_RECORD_KEY,APPLITOOLS_API_KEY=$APPLITOOLS_API_KEY,APPLITOOLS_BATCH_ID=$CIRCLE_SHA1"
 
 
