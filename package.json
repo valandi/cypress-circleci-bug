@@ -11,7 +11,7 @@
   "author": "Applitools Team <team@applitools.com> (http://www.applitools.com/)",
   "license": "ISC",
   "dependencies": {
-    "@applitools/eyes-cypress": "^3.25.1",
+    "@applitools/eyes-cypress": "3.22.1",
     "cypress": "^9.5.1"
   }
 }
