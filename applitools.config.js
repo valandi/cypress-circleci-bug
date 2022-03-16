@@ -16,7 +16,6 @@ module.exports = {
     batchName: 'Demo Batch - Cypress',
     showLogs: true,
     failCypressOnDiff: false,
-    "batch.id": "cypress_batch_id_1234567",
     batchId: process.env.APPLITOOLS_BATCH_ID,
-    branchName: "cypress_branch_idk"
+    branchName: process.env.APPLITOOLS_BRANCH_NAME
 }
