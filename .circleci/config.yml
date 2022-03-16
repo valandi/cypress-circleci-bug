@@ -17,6 +17,7 @@ workflows:
           browser: chrome
           executor: with-chrome
           command: |
+            
             export APPLITOOLS_BATCH_ID=`echo $CIRCLE_SHA1`
             npm test
 
