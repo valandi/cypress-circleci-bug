@@ -1,7 +1,6 @@
 version: 2.1
 orbs:
   cypress: cypress-io/cypress@1
-
 executors:
   node:
     docker:
@@ -11,55 +10,15 @@ executors:
     docker:
       - image: "cypress/browsers:node14.17.0-chrome88-ff89"
     resource_class: xlarge
-
-jobs:
-  prepareApplitools:
-    executor: node
-    steps:
-      - run:
-          name: Setup Environment Variables
-          command: |
-            echo 'export PATH=$GOPATH/bin:$PATH' >> $BASH_ENV
-            echo 'export GIT_SHA1=$CIRCLE_SHA1' >> $BASH_ENV
-      - run:
-          name: Prepare Applitools for code push
-          command: |
-            export APPLITOOLS_BATCH_ID="echo $CIRCLE_SHA1"
-            export APPLITOOLS_BRANCH_NAME="echo chris_applitools/cypress_circleci_bug/$CIRCLE_BRANCH"
-            echo "hello world"
-            curl --data '' -L -X POST "https://eyesapi.applitools.com/api/externals/github/push?apiKey=$APPLITOOLS_API_KEY&CommitSha=$CIRCLE_SHA1&BranchName=$APPLITOOLS_BRANCH_NAME"
-  alertApplitools:
-    executor: node
-    steps:
-      - run:
-          name: Alert Applitools of completion
-          command: |
-            curl -X POST "https://eyesapi.applitools.com/api/externals/github/servers/github.com/commit/$CIRCLE_SHA1/complete?apiKey=$APPLITOOLS_API_KEY" -H "Content-Type: application/json" --data '{"serverId": "github.com", "commitSha": "$CIRCLE_SHA1"}' -v -L
 workflows:
-  version: 2
-  install_build_test:
+  build:
     jobs:
-      - cypress/install:
-          context: nlo_context
-          name: "install"
-          executor: with-chrome
-          build: npm install
-      - prepareApplitools:
-          context: nlo_context
-          requires:
-            - install
       - cypress/run:
-          context: nlo_context
-          name: "run"
-          requires:
-            - prepareApplitools
           browser: chrome
           executor: with-chrome
-          group: "UI - Chrome"
-          no-workspace: true
-          ci-build-id: ${CIRCLE_WORKFLOW_ID}
-          env: "CYPRESS_RECORD_KEY=$CYPRESS_RECORD_KEY,APPLITOOLS_API_KEY=$APPLITOOLS_API_KEY,APPLITOOLS_BATCH_ID=$CIRCLE_SHA1"
-      - alertApplitools:
-          requires:
-            - run
-          context: nlo_context
+          command: |
+            export APPLITOOLS_BATCH_ID=`echo $CIRCLE_SHA1`
+            npm test
+
+
+

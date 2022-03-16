@@ -1,6 +1,6 @@
 module.exports = {
     testConcurrency: 5,
-    apiKey: 'APPLITOOLS_API_KEY',
+    apiKey: 'KDfyZZ5SlkMexpbzkvsC1qjL2Lzoh5y4993PQmBTcS7M110',
     //
     browser: [
         // Add browsers with different viewports
