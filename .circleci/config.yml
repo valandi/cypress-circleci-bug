@@ -20,7 +20,7 @@ jobs:
           command: | 
             if [[ -z "${CIRCLE_PULL_REQUEST}" ]]; then
               echo "Not a PR, add an APPLITOOLS_BRANCH_NAME"
-              export APPLITOOLS_BRANCH_NAME="Plakhota/js-images-circleCI/"$CIRCLE_BRANCH
+              export APPLITOOLS_BRANCH_NAME="callulis/cypress-circleci/${CIRCLE_BRANCH}""
               curl -v -L -d '' -X POST "eyesapi.applitools.com/api/externals/github/push?apiKey=$APPLITOOLS_API_KEY&CommitSha=$CIRCLE_SHA1&BranchName=$APPLITOOLS_BRANCH_NAME"
             else
               echo "Is a PR, expect Branch and Parent Branch set by the Github integration app"
