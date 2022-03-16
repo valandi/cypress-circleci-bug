@@ -1,6 +1,6 @@
 module.exports = {
     testConcurrency: 5,
-    apiKey: 'APPLITOOLS_API_KEY',
+    apiKey: 'KDfyZZ5SlkMexpbzkvsC1qjL2Lzoh5y4993PQmBTcS7M110',
     //
     browser: [
         // Add browsers with different viewports
@@ -15,7 +15,5 @@ module.exports = {
     // set batch name to the configuration
     batchName: 'Demo Batch - Cypress',
     showLogs: true,
-    failCypressOnDiff: false,
-    batchId: process.env.APPLITOOLS_BATCH_ID,
-    branchName: process.env.APPLITOOLS_BRANCH_NAME
+    failCypressOnDiff: false
 }
