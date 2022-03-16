@@ -16,3 +16,4 @@ More about the Eyes Cypress SDK:
 * https://applitools.com/docs/api/eyes-sdk/indexm/classindex-cypress-javascript.html
 ASDFASDFLASLDF<MA{LSKDMF
 dza'/xl.cv,zlxc,vvsdevs
+fas/ldkjfmnolsdfwselfkrnw eslfj;knmwsejlkfnweljfnwe
