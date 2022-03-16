@@ -15,3 +15,4 @@ More about the Eyes Cypress SDK:
 * https://www.npmjs.com/package/@applitools/eyes-cypress
 * https://applitools.com/docs/api/eyes-sdk/indexm/classindex-cypress-javascript.html
 ASDFASDFLASLDF<MA{LSKDMF
+dza'/xl.cv,zlxc,vvsdevs
