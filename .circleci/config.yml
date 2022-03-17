@@ -52,9 +52,8 @@ workflows:
           parallelism: 10
           group: "UI - Chrome"
           ci-build-id: ${CIRCLE_WORKFLOW_ID}
-          command: |
+          start: |
             export APPLITOOLS_BATCH_ID=`echo $CIRCLE_SHA1`
-            npm test
           no-workspace: true
           env: "CYPRESS_RECORD_KEY=$CYPRESS_RECORD_KEY,APPLITOOLS_API_KEY=$APPLITOOLS_API_KEY"
       - alertApplitools:
