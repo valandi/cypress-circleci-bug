@@ -48,12 +48,10 @@ workflows:
           name: "cypress"
           browser: chrome
           executor: with-chrome
-          # wait-on: "http://localhost:8000"
-          # yarn: true
-          # start: yarn serve
-          # record: true
-          # parallel: true
-          # parallelism: 10
+          parallel: true
+          parallelism: 10
+          group: "UI - Chrome"
+          ci-build-id: ${CIRCLE_WORKFLOW_ID}
           command: |
             export APPLITOOLS_BATCH_ID=`echo $CIRCLE_SHA1`
             npm test
