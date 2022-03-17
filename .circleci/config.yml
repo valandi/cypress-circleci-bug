@@ -10,6 +10,8 @@ executors:
     docker:
       - image: "cypress/browsers:node14.17.0-chrome88-ff89"
     resource_class: xlarge
+    env:
+      APPLITOOLS_BATCH_ID: $CIRCLE_SHA1
 
 jobs:
   prepareApplitools:
@@ -56,12 +58,9 @@ workflows:
           # parallel: true
           # parallelism: 10
           command: |
-            export APPLITOOLS_BATCH_ID=`echo $CIRCLE_SHA1`
             npm test
-          group: "UI - Chrome"
           no-workspace: true
-          ci-build-id: ${CIRCLE_WORKFLOW_ID}
-          env: "CYPRESS_RECORD_KEY=$CYPRESS_RECORD_KEY,APPLITOOLS_API_KEY=$APPLITOOLS_API_KEY,APPLITOOLS_BATCH_ID=$CIRCLE_SHA1"
+          env: "CYPRESS_RECORD_KEY=$CYPRESS_RECORD_KEY,APPLITOOLS_API_KEY=$APPLITOOLS_API_KEY"
       - alertApplitools:
           context: nlo_context
           requires:
