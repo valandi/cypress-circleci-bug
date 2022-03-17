@@ -11,7 +11,7 @@ executors:
       - image: "cypress/browsers:node14.17.0-chrome88-ff89"
     resource_class: xlarge
     environment:
-      APPLITOOLS_BATCH_ID: $CIRCLE_SHA1
+      APPLITOOLS_BATCH_ID: "$CIRCLE_SHA1"
 
 jobs:
   prepareApplitools:
