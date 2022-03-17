@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   cypress: cypress-io/cypress@1
+
 executors:
   node:
     docker:
@@ -9,14 +10,57 @@ executors:
     docker:
       - image: "cypress/browsers:node14.17.0-chrome88-ff89"
     resource_class: xlarge
+
+jobs:
+  prepareApplitools:
+    executor: node
+    steps:
+      - run:
+          name: Prepare Applitools for code push
+          command: |
+            curl -X POST "https://eyesapi.applitools.com/api/externals/github/push?apiKey=$APPLITOOLS_API_KEY&CommitSha=$CIRCLE_SHA1&BranchName=$CIRCLE_BRANCH" --data "" -L
+
+  alertApplitools:
+    executor: node
+    steps:
+      - run:
+          name: Alert Applitools of completion
+          command: |
+            curl -X POST "https://eyesapi.applitools.com/api/externals/github/servers/github.com/commit/$CIRCLE_SHA1/complete?apiKey=$APPLITOOLS_API_KEY" -H "Content-Type: application/json" --data '{"serverId": "github.com", "commitSha": "$CIRCLE_SHA1"}' -v -L
+
 workflows:
-  build:
+  version: 2
+  install_build_test:
     jobs:
+      - cypress/install:
+          context: nlo_context
+          name: "install"
+          yarn: true
+          executor: with-chrome
+          build: "yarn run build:max-space"
+      - prepareApplitools:
+          context: nlo_context
+          requires:
+            - install
       - cypress/run:
+          context: nlo_context
+          requires:
+            - prepareApplitools
+          name: "cypress"
           browser: chrome
           executor: with-chrome
-          command: |
-            export APPLITOOLS_BATCH_ID=`echo $CIRCLE_SHA1`
-            npm test
-
-
+          # wait-on: "http://localhost:8000"
+          # yarn: true
+          # start: yarn serve
+          # record: true
+          # parallel: true
+          # parallelism: 10
+          command: npm test
+          group: "UI - Chrome"
+          no-workspace: true
+          ci-build-id: ${CIRCLE_WORKFLOW_ID}
+          env: "CYPRESS_RECORD_KEY=$CYPRESS_RECORD_KEY,APPLITOOLS_API_KEY=$APPLITOOLS_API_KEY,APPLITOOLS_BATCH_ID=$CIRCLE_SHA1"
+      - alertApplitools:
+          context: nlo_context
+          requires:
+            - cypress
