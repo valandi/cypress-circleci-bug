@@ -55,7 +55,9 @@ workflows:
           # record: true
           # parallel: true
           # parallelism: 10
-          command: npm test
+          command: |
+            export APPLITOOLS_BATCH_ID=`echo $CIRCLE_SHA1`
+            npm test
           group: "UI - Chrome"
           no-workspace: true
           ci-build-id: ${CIRCLE_WORKFLOW_ID}
