@@ -10,7 +10,7 @@ executors:
     docker:
       - image: "cypress/browsers:node14.17.0-chrome88-ff89"
     resource_class: xlarge
-    env:
+    environment:
       APPLITOOLS_BATCH_ID: $CIRCLE_SHA1
 
 jobs:
