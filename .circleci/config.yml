@@ -9,6 +9,8 @@ executors:
   with-chrome:
     docker:
       - image: "cypress/browsers:node14.17.0-chrome88-ff89"
+    environment:
+      APPLITOOLS_BATCH_ID: $CIRCLE_SHA1
     resource_class: xlarge
 
 jobs:
@@ -53,8 +55,6 @@ workflows:
           group: "UI - Chrome"
           ci-build-id: ${CIRCLE_WORKFLOW_ID}
           command: |
-            export APPLITOOLS_BATCH_ID=`echo $CIRCLE_SHA1`
-            echo `${APPLITOOLS_BATCH_ID}`
             npm test
           no-workspace: true
           env: "CYPRESS_RECORD_KEY=$CYPRESS_RECORD_KEY,APPLITOOLS_API_KEY=$APPLITOOLS_API_KEY"
