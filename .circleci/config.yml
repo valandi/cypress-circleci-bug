@@ -9,8 +9,8 @@ executors:
   with-chrome:
     docker:
       - image: "cypress/browsers:node14.17.0-chrome88-ff89"
-    command: |
-      export `echo APPLITOOLS_BATCH_ID=${APPLITOOLS_BATCH_ID}
+    environment:
+      APPLITOOLS_BATCH_ID: $APPLITOOLS_API_KEY
     resource_class: xlarge
 
 jobs:
