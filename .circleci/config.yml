@@ -54,6 +54,7 @@ workflows:
           ci-build-id: ${CIRCLE_WORKFLOW_ID}
           command: |
             export APPLITOOLS_BATCH_ID=`echo $CIRCLE_SHA1`
+            echo `${APPLITOOLS_BATCH_ID}`
             npm test
           no-workspace: true
           env: "CYPRESS_RECORD_KEY=$CYPRESS_RECORD_KEY,APPLITOOLS_API_KEY=$APPLITOOLS_API_KEY"
