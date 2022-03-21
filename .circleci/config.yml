@@ -9,8 +9,8 @@ executors:
   with-chrome:
     docker:
       - image: "cypress/browsers:node14.17.0-chrome88-ff89"
-    environment:
-      APPLITOOLS_BATCH_ID: $(echo CIRCLE_SHA1 | cut -c -7) 
+    command: |
+      export `echo APPLITOOLS_BATCH_ID=${APPLITOOLS_BATCH_ID}
     resource_class: xlarge
 
 jobs:
