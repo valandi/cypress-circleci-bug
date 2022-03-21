@@ -11,6 +11,7 @@ describe("AppTest", () => {
         console.log(process.env.APPLITOOLS_API_KEY);
         console.log(process.env.APPLITOOLS_BRANCH_NAME);
         console.log(process.env.APPLITOOLS_BASELINE_BRANCH_NAME);
+        console.log(process.env.APPLITOOLS_BASELINE_BRANCH_NAME);
         console.log("---- ENVIRONEMTN VARIABLES -----")
 
         cy.visit('https://demo.applitools.com');
